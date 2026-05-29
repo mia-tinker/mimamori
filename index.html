@@ -2,469 +2,527 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" type="image/png" href="icon.png">
-<meta name="apple-mobile-web-app-title" content="みまもり">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>おおくらみまもり</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
---sky: #e8f4fd; --sky-mid: #c5e3f7; --morning: #fdf3e3;
---sun: #f9c74f; --sun-glow: #f8961e;
---green: #90be6d; --green-dark: #5a8a3c;
---night-mid: #2a9d8f; --consult: #e76f51;
---text: #2d3436; --text-light: #636e72;
---card-shadow: 0 8px 32px rgba(0,0,0,0.10);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-font-family: 'Zen Maru Gothic','Noto Sans JP',sans-serif;
-background: linear-gradient(160deg, var(--sky) 0%, var(--morning) 100%);
-min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0 0 40px 0;
-}
-@keyframes fadeInUp {
-from { opacity:0; transform:translateY(16px); }
-to { opacity:1; transform:translateY(0); }
-}
+  :root {
+    --sky: #e8f4fd; --sky-mid: #c5e3f7; --morning: #fdf3e3;
+    --sun: #f9c74f; --sun-glow: #f8961e;
+    --green: #90be6d; --green-dark: #5a8a3c;
+    --night-mid: #2a9d8f; --consult: #e76f51;
+    --text: #2d3436; --text-light: #636e72;
+    --card-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Zen Maru Gothic','Noto Sans JP',sans-serif;
+    background: linear-gradient(160deg, var(--sky) 0%, var(--morning) 100%);
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0 0 40px 0;
+  }
+  @keyframes fadeInUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
 
-/* ━━━ メイン画面 ━━━ */
-#mainScreen { width:100%; display:flex; flex-direction:column; align-items:center; }
-#mainScreen.hidden { display:none; }
-.header {
-width:100%; background:linear-gradient(135deg,#fff8ee 0%,#e8f4fd 100%);
-border-bottom:3px solid var(--sky-mid); padding:16px 24px 14px; text-align:center;
-}
-.header-sub { font-size:10px; color:var(--text-light); letter-spacing:2px; margin-bottom:2px; }
-.header-title { font-size:20px; font-weight:700; color:var(--text); letter-spacing:1px; margin-bottom:10px; }
-.header-title span { color:var(--sun-glow); }
-.user-strip {
-display:inline-flex; align-items:center; gap:8px; background:white;
-border-radius:50px; padding:6px 14px 6px 10px;
-box-shadow:0 2px 10px rgba(0,0,0,0.08); margin-bottom:9px;
-}
-.status-badge {
-background:#f0fdf4; color:var(--green-dark); border:1.5px solid var(--green);
-border-radius:20px; font-size:10px; padding:2px 8px; font-weight:700;
-}
-.datetime-bar { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text-light); }
-.datetime-bar .dot { color:var(--sun); font-size:16px; }
+  /* ━━━ メイン画面 ━━━ */
+  #mainScreen { width:100%; display:flex; flex-direction:column; align-items:center; }
+  #mainScreen.hidden { display:none; }
+  .header {
+    width:100%; background:linear-gradient(135deg,#fff8ee 0%,#e8f4fd 100%);
+    border-bottom:3px solid var(--sky-mid); padding:16px 24px 14px; text-align:center;
+  }
+  .header-sub   { font-size:10px; color:var(--text-light); letter-spacing:2px; margin-bottom:2px; }
+  .header-title { font-size:20px; font-weight:700; color:var(--text); letter-spacing:1px; margin-bottom:10px; }
+  .header-title span { color:var(--sun-glow); }
+  .user-strip {
+    display:inline-flex; align-items:center; gap:8px; background:white;
+    border-radius:50px; padding:6px 14px 6px 10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08); margin-bottom:9px;
+  }
+  .status-badge {
+    background:#f0fdf4; color:var(--green-dark); border:1.5px solid var(--green);
+    border-radius:20px; font-size:10px; padding:2px 8px; font-weight:700;
+  }
+  .datetime-bar { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text-light); }
+  .datetime-bar .dot { color:var(--sun); font-size:16px; }
 
-.buttons-section {
-margin:24px auto 0; width:calc(100% - 40px); max-width:360px;
-display:flex; flex-direction:column; gap:14px; animation:fadeInUp 0.45s ease 0.1s both;
-}
-.section-label { font-size:11px; color:var(--text-light); letter-spacing:2px; text-align:center; margin-bottom:2px; }
-.btn {
-width:100%; border:none; border-radius:22px; padding:0; cursor:pointer;
-position:relative; z-index:1; transition:transform 0.12s;
-}
-.btn:active { transform:scale(0.97); }
-.btn-inner {
-display:flex; align-items:center; padding:20px 24px; gap:16px;
-border-radius:22px; overflow:hidden;
-}
-.btn-icon { font-size:36px; flex-shrink:0; }
-.btn-text { text-align:left; flex:1; }
-.btn-title { font-size:22px; font-weight:700; color:white; line-height:1.2; text-shadow:0 1px 4px rgba(0,0,0,0.2); }
-.btn-sub { font-size:12px; color:rgba(255,255,255,0.85); margin-top:3px; }
-.btn-arrow { color:rgba(255,255,255,0.6); font-size:18px; flex-shrink:0; }
-.btn-morning .btn-inner { background:linear-gradient(135deg,#f9c74f 0%,#f8961e 100%); box-shadow:0 8px 24px rgba(249,199,79,0.45); }
-.btn-night .btn-inner { background:linear-gradient(135deg,#264653 0%,#2a9d8f 100%); box-shadow:0 8px 24px rgba(38,70,83,0.35); }
-.btn-consult .btn-inner { background:linear-gradient(135deg,#e76f51 0%,#c1440e 100%); box-shadow:0 8px 24px rgba(231,111,81,0.38); }
+  .buttons-section {
+    margin:24px auto 0; width:calc(100% - 40px); max-width:360px;
+    display:flex; flex-direction:column; gap:14px; animation:fadeInUp 0.45s ease 0.1s both;
+  }
+  .section-label { font-size:11px; color:var(--text-light); letter-spacing:2px; text-align:center; margin-bottom:2px; }
+  .btn {
+    width:100%; border:none; border-radius:22px; padding:0; cursor:pointer;
+    position:relative; z-index:1; transition:transform 0.12s;
+  }
+  .btn:active { transform:scale(0.97); }
+  .btn-inner {
+    display:flex; align-items:center; padding:20px 24px; gap:16px;
+    border-radius:22px; overflow:hidden;
+  }
+  .btn-icon  { font-size:36px; flex-shrink:0; }
+  .btn-text  { text-align:left; flex:1; }
+  .btn-title { font-size:22px; font-weight:700; color:white; line-height:1.2; text-shadow:0 1px 4px rgba(0,0,0,0.2); }
+  .btn-sub   { font-size:12px; color:rgba(255,255,255,0.85); margin-top:3px; }
+  .btn-arrow { color:rgba(255,255,255,0.6); font-size:18px; flex-shrink:0; }
+  .btn-morning .btn-inner { background:linear-gradient(135deg,#f9c74f 0%,#f8961e 100%); box-shadow:0 8px 24px rgba(249,199,79,0.45); }
+  .btn-night   .btn-inner { background:linear-gradient(135deg,#264653 0%,#2a9d8f 100%); box-shadow:0 8px 24px rgba(38,70,83,0.35); }
+  .btn-consult .btn-inner { background:linear-gradient(135deg,#e76f51 0%,#c1440e 100%); box-shadow:0 8px 24px rgba(231,111,81,0.38); }
 
-.log-section { margin:24px auto 0; width:calc(100% - 40px); max-width:360px; animation:fadeInUp 0.45s ease 0.25s both; }
-.log-title { font-size:12px; color:var(--text-light); letter-spacing:2px; margin-bottom:10px; }
-.log-card { background:white; border-radius:18px; padding:12px 18px; box-shadow:var(--card-shadow); }
-.log-item { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid #f1f1f1; }
-.log-item:last-child { border-bottom:none; }
-.log-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-.dot-morning { background:var(--sun); }
-.dot-night { background:var(--night-mid); }
-.dot-consult { background:var(--consult); }
-.log-content { flex:1; }
-.log-type { font-size:13px; font-weight:700; color:var(--text); }
-.log-time { font-size:11px; color:var(--text-light); margin-top:1px; }
-.log-check { font-size:15px; color:var(--green); }
-.footer-note { margin-top:28px; font-size:11px; color:#b2bec3; text-align:center; }
+  .log-section { margin:24px auto 0; width:calc(100% - 40px); max-width:360px; animation:fadeInUp 0.45s ease 0.25s both; }
+  .log-title   { font-size:12px; color:var(--text-light); letter-spacing:2px; margin-bottom:10px; }
+  .log-card    { background:white; border-radius:18px; padding:12px 18px; box-shadow:var(--card-shadow); }
+  .log-item    { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid #f1f1f1; }
+  .log-item:last-child { border-bottom:none; }
+  .log-dot     { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .dot-morning { background:var(--sun); }
+  .dot-night   { background:var(--night-mid); }
+  .dot-consult { background:var(--consult); }
+  .log-content { flex:1; }
+  .log-type    { font-size:13px; font-weight:700; color:var(--text); }
+  .log-time    { font-size:11px; color:var(--text-light); margin-top:1px; }
+  .log-check   { font-size:15px; color:var(--green); }
+  .footer-note { margin-top:28px; font-size:11px; color:#b2bec3; text-align:center; }
 
-/* ボタン押下 吹き出し */
-.bubble-overlay {
-position:fixed; inset:0; background:rgba(0,0,0,0.40);
-display:flex; align-items:center; justify-content:center;
-z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.25s;
-}
-.bubble-overlay.show { opacity:1; pointer-events:all; }
-.bubble {
-background:white; border-radius:28px; padding:36px 28px;
-max-width:300px; width:88%; text-align:center;
-box-shadow:0 20px 60px rgba(0,0,0,0.28);
-transform:scale(0.88); transition:transform 0.25s;
-}
-.bubble-overlay.show .bubble { transform:scale(1); }
-.bubble-emoji { font-size:52px; margin-bottom:12px; }
-.bubble-message { font-size:20px; font-weight:700; color:var(--text); line-height:1.6; margin-bottom:8px; white-space:pre-line; }
-.bubble-sub { font-size:12px; color:var(--text-light); margin-bottom:24px; }
-.bubble-close {
-background:var(--text); color:white; border:none; border-radius:50px;
-padding:12px 36px; font-size:15px; font-family:inherit; font-weight:700; cursor:pointer;
-}
+  /* ボタン押下 吹き出し */
+  .bubble-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.40);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.25s;
+  }
+  .bubble-overlay.show { opacity:1; pointer-events:all; }
+  .bubble {
+    background:white; border-radius:28px; padding:36px 28px;
+    max-width:300px; width:88%; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.28);
+    transform:scale(0.88); transition:transform 0.25s;
+  }
+  .bubble-overlay.show .bubble { transform:scale(1); }
+  .bubble-emoji   { font-size:52px; margin-bottom:12px; }
+  .bubble-message { font-size:20px; font-weight:700; color:var(--text); line-height:1.6; margin-bottom:8px; white-space:pre-line; }
+  .bubble-sub     { font-size:12px; color:var(--text-light); margin-bottom:24px; }
+  .bubble-close   {
+    background:var(--text); color:white; border:none; border-radius:50px;
+    padding:12px 36px; font-size:15px; font-family:inherit; font-weight:700; cursor:pointer;
+  }
 
-/* ━━━ セットアップ画面 ━━━ */
-#setupScreen {
-position:fixed; inset:0; z-index:8888;
-background:linear-gradient(160deg,var(--sky) 0%,var(--morning) 100%);
-display:flex; flex-direction:column; align-items:center;
-overflow-y:auto; padding-bottom:40px;
-}
-#setupScreen.hidden { display:none; }
+  /* ━━━ アクセスコード画面 ━━━ */
+  #codeScreen {
+    position:fixed; inset:0; z-index:9000;
+    background:linear-gradient(160deg,var(--sky) 0%,var(--morning) 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:0 24px;
+  }
+  #codeScreen.hidden { display:none; }
+  .code-box {
+    width:100%; max-width:360px; background:white;
+    border-radius:28px; padding:36px 28px; text-align:center;
+    box-shadow:var(--card-shadow); animation:fadeInUp 0.5s ease both;
+  }
+  .code-icon   { font-size:52px; margin-bottom:12px; }
+  .code-title  { font-size:20px; font-weight:700; color:var(--text); margin-bottom:6px; }
+  .code-sub    { font-size:13px; color:var(--text-light); margin-bottom:24px; line-height:1.6; }
+  .code-input  {
+    width:100%; border:3px solid var(--sky-mid); border-radius:16px;
+    padding:16px; font-size:32px; font-weight:700; text-align:center;
+    letter-spacing:12px; font-family:inherit; color:var(--text);
+    outline:none; transition:border-color 0.2s; background:#fafafa;
+    margin-bottom:16px;
+  }
+  .code-input:focus { border-color:var(--sun-glow); background:white; }
+  .code-btn {
+    width:100%; border:none; border-radius:16px; padding:16px;
+    font-size:17px; font-weight:700; font-family:inherit;
+    color:white; cursor:pointer;
+    background:linear-gradient(135deg,var(--sun) 0%,var(--sun-glow) 100%);
+    box-shadow:0 6px 20px rgba(249,199,79,0.4);
+    transition:transform 0.12s, opacity 0.12s;
+  }
+  .code-btn:active { transform:scale(0.97); }
+  .code-error {
+    font-size:13px; color:#e76f51; margin-top:12px;
+    font-weight:700; display:none;
+  }
+  .code-error.show { display:block; }
 
-.setup-header {
-width:100%; background:linear-gradient(135deg,#fff8ee 0%,#e8f4fd 100%);
-border-bottom:3px solid var(--sky-mid); padding:20px 24px 16px; text-align:center;
-}
-.setup-icon { font-size:40px; margin-bottom:6px; }
-.setup-title { font-size:20px; font-weight:700; color:var(--text); }
-.setup-title span { color:var(--sun-glow); }
-.setup-subtitle { font-size:12px; color:var(--text-light); margin-top:4px; letter-spacing:1px; }
+  /* ━━━ セットアップ画面 ━━━ */
+  #setupScreen {
+    position:fixed; inset:0; z-index:8888;
+    background:linear-gradient(160deg,var(--sky) 0%,var(--morning) 100%);
+    display:flex; flex-direction:column; align-items:center;
+    overflow-y:auto; padding-bottom:40px;
+  }
+  #setupScreen.hidden { display:none; }
 
-/* ステップバー */
-.step-bar {
-display:flex; align-items:center; justify-content:center; gap:0;
-margin:18px auto 0; width:calc(100% - 40px); max-width:360px;
-}
-.step-dot {
-width:28px; height:28px; border-radius:50%; border:2px solid var(--sky-mid);
-background:white; display:flex; align-items:center; justify-content:center;
-font-size:12px; font-weight:700; color:var(--text-light); flex-shrink:0;
-transition:all 0.3s;
-}
-.step-dot.active { background:var(--sun-glow); border-color:var(--sun-glow); color:white; }
-.step-dot.done { background:var(--green); border-color:var(--green); color:white; }
-.step-line { flex:1; height:2px; background:var(--sky-mid); }
+  .setup-header {
+    width:100%; background:linear-gradient(135deg,#fff8ee 0%,#e8f4fd 100%);
+    border-bottom:3px solid var(--sky-mid); padding:20px 24px 16px; text-align:center;
+  }
+  .setup-icon     { font-size:40px; margin-bottom:6px; }
+  .setup-title    { font-size:20px; font-weight:700; color:var(--text); }
+  .setup-title span { color:var(--sun-glow); }
+  .setup-subtitle { font-size:12px; color:var(--text-light); margin-top:4px; letter-spacing:1px; }
 
-.setup-card {
-margin:16px auto 0; width:calc(100% - 40px); max-width:360px;
-background:white; border-radius:22px; padding:22px 20px;
-box-shadow:var(--card-shadow); animation:fadeInUp 0.4s ease both;
-}
-.setup-card-title { font-size:11px; font-weight:700; color:var(--text-light); letter-spacing:2px; margin-bottom:14px; }
+  /* ステップバー */
+  .step-bar {
+    display:flex; align-items:center; justify-content:center; gap:0;
+    margin:18px auto 0; width:calc(100% - 40px); max-width:360px;
+  }
+  .step-dot {
+    width:28px; height:28px; border-radius:50%; border:2px solid var(--sky-mid);
+    background:white; display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; color:var(--text-light); flex-shrink:0;
+    transition:all 0.3s;
+  }
+  .step-dot.active   { background:var(--sun-glow); border-color:var(--sun-glow); color:white; }
+  .step-dot.done     { background:var(--green);    border-color:var(--green);    color:white; }
+  .step-line { flex:1; height:2px; background:var(--sky-mid); }
 
-.input-label { font-size:14px; color:var(--text); font-weight:700; margin-bottom:4px; }
-.input-hint { font-size:11px; color:var(--text-light); margin-bottom:8px; }
-.setup-input {
-width:100%; border:2px solid var(--sky-mid); border-radius:12px;
-padding:13px 16px; font-size:18px; font-family:inherit; color:var(--text);
-outline:none; transition:border-color 0.2s; background:#fafafa;
-}
-.setup-input:focus { border-color:var(--sun-glow); background:white; }
-.setup-input::placeholder { color:#b2bec3; font-size:15px; }
+  .setup-card {
+    margin:16px auto 0; width:calc(100% - 40px); max-width:360px;
+    background:white; border-radius:22px; padding:22px 20px;
+    box-shadow:var(--card-shadow); animation:fadeInUp 0.4s ease both;
+  }
+  .setup-card-title { font-size:11px; font-weight:700; color:var(--text-light); letter-spacing:2px; margin-bottom:14px; }
 
-/* アバター選択 */
-.avatar-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
-.avatar-btn {
-width:50px; height:50px; border-radius:50%; border:3px solid transparent;
-background:#f1f5f9; font-size:24px; cursor:pointer;
-display:flex; align-items:center; justify-content:center;
-transition:border-color 0.15s, background 0.15s;
-}
-.avatar-btn.selected { border-color:var(--sun-glow); background:#fff8ee; }
+  .input-label { font-size:14px; color:var(--text); font-weight:700; margin-bottom:4px; }
+  .input-hint  { font-size:11px; color:var(--text-light); margin-bottom:8px; }
+  .setup-input {
+    width:100%; border:2px solid var(--sky-mid); border-radius:12px;
+    padding:13px 16px; font-size:18px; font-family:inherit; color:var(--text);
+    outline:none; transition:border-color 0.2s; background:#fafafa;
+  }
+  .setup-input:focus { border-color:var(--sun-glow); background:white; }
+  .setup-input::placeholder { color:#b2bec3; font-size:15px; }
 
-/* ━━━ 担当者カード ━━━ */
-.tantou-list { display:flex; flex-direction:column; gap:10px; margin-top:4px; }
-.tantou-item {
-display:flex; align-items:center; gap:14px;
-border:2.5px solid var(--sky-mid); border-radius:14px;
-padding:14px 16px; cursor:pointer; background:#fafafa;
-transition:border-color 0.15s, background 0.15s;
-position:relative;
-}
-.tantou-item.selected {
-border-color:var(--sun-glow); background:#fff8ee;
-}
-.tantou-avatar {
-width:44px; height:44px; border-radius:50%;
-background:linear-gradient(135deg,var(--sky-mid),var(--sun));
-display:flex; align-items:center; justify-content:center;
-font-size:22px; flex-shrink:0;
-}
-.tantou-info { flex:1; }
-.tantou-name { font-size:16px; font-weight:700; color:var(--text); }
-.tantou-role { font-size:11px; color:var(--text-light); margin-top:2px; }
-.tantou-check {
-width:22px; height:22px; border-radius:50%; border:2px solid var(--sky-mid);
-display:flex; align-items:center; justify-content:center;
-font-size:13px; color:white; background:white; flex-shrink:0;
-transition:all 0.15s;
-}
-.tantou-item.selected .tantou-check {
-background:var(--sun-glow); border-color:var(--sun-glow);
-}
+  /* アバター選択 */
+  .avatar-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .avatar-btn {
+    width:50px; height:50px; border-radius:50%; border:3px solid transparent;
+    background:#f1f5f9; font-size:24px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .avatar-btn.selected { border-color:var(--sun-glow); background:#fff8ee; }
 
-/* 選択された担当者プレビュー */
-.tantou-preview {
-display:none; margin-top:12px;
-background:#fff8ee; border:1.5px solid var(--sun);
-border-radius:12px; padding:12px 14px;
-font-size:13px; color:var(--text); line-height:1.6;
-}
-.tantou-preview.show { display:block; }
+  /* ━━━ 担当者カード ━━━ */
+  .tantou-list { display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+  .tantou-item {
+    display:flex; align-items:center; gap:14px;
+    border:2.5px solid var(--sky-mid); border-radius:14px;
+    padding:14px 16px; cursor:pointer; background:#fafafa;
+    transition:border-color 0.15s, background 0.15s;
+    position:relative;
+  }
+  .tantou-item.selected {
+    border-color:var(--sun-glow); background:#fff8ee;
+  }
+  .tantou-avatar {
+    width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(135deg,var(--sky-mid),var(--sun));
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .tantou-info  { flex:1; }
+  .tantou-name  { font-size:16px; font-weight:700; color:var(--text); }
+  .tantou-role  { font-size:11px; color:var(--text-light); margin-top:2px; }
+  .tantou-check {
+    width:22px; height:22px; border-radius:50%; border:2px solid var(--sky-mid);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; color:white; background:white; flex-shrink:0;
+    transition:all 0.15s;
+  }
+  .tantou-item.selected .tantou-check {
+    background:var(--sun-glow); border-color:var(--sun-glow);
+  }
 
-/* スプレッドシート説明 */
-.sheet-info {
-background:#f0fdf4; border:1.5px solid var(--green); border-radius:14px;
-padding:14px 16px; font-size:12px; color:var(--green-dark); line-height:1.7;
-}
-.sheet-info strong { display:block; font-size:13px; margin-bottom:4px; }
+  /* 選択された担当者プレビュー */
+  .tantou-preview {
+    display:none; margin-top:12px;
+    background:#fff8ee; border:1.5px solid var(--sun);
+    border-radius:12px; padding:12px 14px;
+    font-size:13px; color:var(--text); line-height:1.6;
+  }
+  .tantou-preview.show { display:block; }
 
-/* 登録ボタン */
-.setup-btn {
-margin:20px auto 0; width:calc(100% - 40px); max-width:360px; display:block;
-border:none; border-radius:18px; padding:18px; font-size:18px; font-weight:700;
-font-family:inherit; color:white; cursor:pointer;
-background:linear-gradient(135deg,var(--sun) 0%,var(--sun-glow) 100%);
-box-shadow:0 8px 24px rgba(249,199,79,0.4);
-transition:transform 0.12s, opacity 0.12s;
-animation:fadeInUp 0.45s ease 0.3s both;
-}
-.setup-btn:disabled { opacity:0.35; cursor:not-allowed; }
-.setup-btn:not(:disabled):active { transform:scale(0.97); }
+  /* スプレッドシート説明 */
+  .sheet-info {
+    background:#f0fdf4; border:1.5px solid var(--green); border-radius:14px;
+    padding:14px 16px; font-size:12px; color:var(--green-dark); line-height:1.7;
+  }
+  .sheet-info strong { display:block; font-size:13px; margin-bottom:4px; }
 
-/* 登録完了ポップアップ */
-.done-overlay {
-position:fixed; inset:0; background:rgba(0,0,0,0.45);
-display:flex; align-items:center; justify-content:center;
-z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.3s;
-}
-.done-overlay.show { opacity:1; pointer-events:all; }
-.done-card {
-background:white; border-radius:28px; padding:36px 28px;
-max-width:300px; width:88%; text-align:center;
-box-shadow:0 20px 60px rgba(0,0,0,0.28);
-transform:scale(0.88); transition:transform 0.25s;
-}
-.done-overlay.show .done-card { transform:scale(1); }
-.done-emoji { font-size:52px; margin-bottom:10px; }
-.done-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:8px; }
-.done-sub { font-size:13px; color:var(--text-light); line-height:1.7; margin-bottom:16px; white-space:pre-line; }
-.done-sheet {
-background:#f0fdf4; border-radius:10px; padding:12px 14px;
-font-size:12px; color:var(--green-dark); margin-bottom:22px;
-text-align:left; line-height:1.8;
-}
-.done-btn {
-background:var(--text); color:white; border:none; border-radius:50px;
-padding:13px 36px; font-size:15px; font-family:inherit; font-weight:700; cursor:pointer;
-}
+  /* 登録ボタン */
+  .setup-btn {
+    margin:20px auto 0; width:calc(100% - 40px); max-width:360px; display:block;
+    border:none; border-radius:18px; padding:18px; font-size:18px; font-weight:700;
+    font-family:inherit; color:white; cursor:pointer;
+    background:linear-gradient(135deg,var(--sun) 0%,var(--sun-glow) 100%);
+    box-shadow:0 8px 24px rgba(249,199,79,0.4);
+    transition:transform 0.12s, opacity 0.12s;
+    animation:fadeInUp 0.45s ease 0.3s both;
+  }
+  .setup-btn:disabled { opacity:0.35; cursor:not-allowed; }
+  .setup-btn:not(:disabled):active { transform:scale(0.97); }
+
+  /* 登録完了ポップアップ */
+  .done-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.45);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.3s;
+  }
+  .done-overlay.show { opacity:1; pointer-events:all; }
+  .done-card {
+    background:white; border-radius:28px; padding:36px 28px;
+    max-width:300px; width:88%; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.28);
+    transform:scale(0.88); transition:transform 0.25s;
+  }
+  .done-overlay.show .done-card { transform:scale(1); }
+  .done-emoji { font-size:52px; margin-bottom:10px; }
+  .done-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:8px; }
+  .done-sub   { font-size:13px; color:var(--text-light); line-height:1.7; margin-bottom:16px; white-space:pre-line; }
+  .done-sheet {
+    background:#f0fdf4; border-radius:10px; padding:12px 14px;
+    font-size:12px; color:var(--green-dark); margin-bottom:22px;
+    text-align:left; line-height:1.8;
+  }
+  .done-btn {
+    background:var(--text); color:white; border:none; border-radius:50px;
+    padding:13px 36px; font-size:15px; font-family:inherit; font-weight:700; cursor:pointer;
+  }
 </style>
 </head>
 <body>
 
 <!-- ━━━━━━━━━━━━━━━━━━━━━━
-セットアップ画面（初回のみ）
+     アクセスコード画面
 ━━━━━━━━━━━━━━━━━━━━━━ -->
-<div id="setupScreen">
-
-<div class="setup-header">
-<div class="setup-icon">🏡</div>
-<div class="setup-title">おおくら<span>み</span>まもり</div>
-<div class="setup-subtitle">はじめての設定 — 一度だけ入力してください</div>
+<div id="codeScreen">
+  <div class="code-box">
+    <div class="code-icon">🔑</div>
+    <div class="code-title">おおくらみまもり</div>
+    <div class="code-sub">
+      担当者から教えてもらった<br>
+      4桁のコードを入力してください
+    </div>
+    <input class="code-input" id="codeInput" type="number"
+      maxlength="4" placeholder="0000"
+      oninput="this.value=this.value.slice(0,4)"
+      onkeyup="if(event.key==='Enter')checkCode()">
+    <button class="code-btn" onclick="checkCode()">確認する</button>
+    <div class="code-error" id="codeError">
+      コードが違います。もう一度入力してください。
+    </div>
+  </div>
 </div>
 
-<!-- ステップバー -->
-<div class="step-bar">
-<div class="step-dot active" id="step1">1</div>
-<div class="step-line"></div>
-<div class="step-dot" id="step2">2</div>
-<div class="step-line"></div>
-<div class="step-dot" id="step3">3</div>
-</div>
+<!-- ━━━━━━━━━━━━━━━━━━━━━━
+     セットアップ画面（初回のみ）
+━━━━━━━━━━━━━━━━━━━━━━ -->
+<div id="setupScreen" class="hidden">
 
-<!-- ① お名前 -->
-<div class="setup-card">
-<div class="setup-card-title">① ご利用者のお名前</div>
-<div class="input-label">お名前（フルネーム）</div>
-<div class="input-hint">ひらがな・漢字どちらでも大丈夫です</div>
-<input class="setup-input" id="inputName" type="text"
-placeholder="例：山田 花子" oninput="checkReady()" maxlength="20">
-</div>
+  <div class="setup-header">
+    <div class="setup-icon">🏡</div>
+    <div class="setup-title">おおくら<span>み</span>まもり</div>
+    <div class="setup-subtitle">はじめての設定 — 一度だけ入力してください</div>
+  </div>
 
-<!-- ② アイコン -->
-<div class="setup-card">
-<div class="setup-card-title">② アイコンを選んでください</div>
-<div class="avatar-row">
-<button class="avatar-btn selected" onclick="selectAvatar(this,'👵')">👵</button>
-<button class="avatar-btn" onclick="selectAvatar(this,'👴')">👴</button>
-<button class="avatar-btn" onclick="selectAvatar(this,'🧓')">🧓</button>
-<button class="avatar-btn" onclick="selectAvatar(this,'👩')">👩</button>
-<button class="avatar-btn" onclick="selectAvatar(this,'👨')">👨</button>
-<button class="avatar-btn" onclick="selectAvatar(this,'🐱')">🐱</button>
-</div>
-</div>
+  <!-- ステップバー -->
+  <div class="step-bar">
+    <div class="step-dot active" id="step1">1</div>
+    <div class="step-line"></div>
+    <div class="step-dot" id="step2">2</div>
+    <div class="step-line"></div>
+    <div class="step-dot" id="step3">3</div>
+  </div>
 
-<!-- ③ 担当者選択 -->
-<div class="setup-card">
-<div class="setup-card-title">③ 担当者を選んでください（1名）</div>
-<div class="input-hint" style="margin-bottom:12px;">
-「ご相談」ボタンが押されたとき、この方にメールで通知されます
-</div>
+  <!-- ① お名前 -->
+  <div class="setup-card">
+    <div class="setup-card-title">① ご利用者のお名前</div>
+    <div class="input-label">お名前（フルネーム）</div>
+    <div class="input-hint">ひらがな・漢字どちらでも大丈夫です</div>
+    <input class="setup-input" id="inputName" type="text"
+      placeholder="例：山田 花子" oninput="checkReady()" maxlength="20">
+  </div>
 
-<!-- 担当者リスト（スプレッドシートから読み込む） -->
-<div class="tantou-list" id="tantouList">
-<div style="text-align:center;padding:16px;color:var(--text-light);font-size:13px;">
-読み込み中...
-</div>
-</div>
+  <!-- ② アイコン -->
+  <div class="setup-card">
+    <div class="setup-card-title">② アイコンを選んでください</div>
+    <div class="avatar-row">
+      <button class="avatar-btn selected" onclick="selectAvatar(this,'👵')">👵</button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'👴')">👴</button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'🧓')">🧓</button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'👩')">👩</button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'👨')">👨</button>
+      <button class="avatar-btn" onclick="selectAvatar(this,'🐱')">🐱</button>
+    </div>
+  </div>
 
-<!-- 選択中の担当者プレビュー -->
-<div class="tantou-preview" id="tantouPreview">
-<span id="tantouPreviewText"></span>
-</div>
-</div>
+  <!-- ③ 担当者選択 -->
+  <div class="setup-card">
+    <div class="setup-card-title">③ 担当者を選んでください（1名）</div>
+    <div class="input-hint" style="margin-bottom:12px;">
+      「ご相談」ボタンが押されたとき、この方にメールで通知されます
+    </div>
 
-<!-- スプレッドシート説明 -->
-<div class="setup-card">
-<div class="setup-card-title">📊 記録先のご案内</div>
-<div class="sheet-info">
-<strong>✅ Googleスプレッドシートに登録されます</strong>
-登録ボタンを押すと、以下の情報が自動で記録されます：<br>
-　・お名前 ・アイコン<br>
-　・担当者名 ・登録日時<br><br>
-<span style="color:#888;font-size:11px;">
-※ 担当者リストはスプレッドシートの「担当者シート」で<br>
-　 管理者が追加・変更できます
-</span>
-</div>
-</div>
+    <!-- 担当者リスト（スプレッドシートから読み込む） -->
+    <div class="tantou-list" id="tantouList">
+      <div style="text-align:center;padding:16px;color:var(--text-light);font-size:13px;">
+        読み込み中...
+      </div>
+    </div>
 
-<button class="setup-btn" id="setupBtn" disabled onclick="doRegister()">
-登録してはじめる →
-</button>
+    <!-- 選択中の担当者プレビュー -->
+    <div class="tantou-preview" id="tantouPreview">
+      <span id="tantouPreviewText"></span>
+    </div>
+  </div>
+
+  <!-- スプレッドシート説明 -->
+  <div class="setup-card">
+    <div class="setup-card-title">📊 記録先のご案内</div>
+    <div class="sheet-info">
+      <strong>✅ Googleスプレッドシートに登録されます</strong>
+      登録ボタンを押すと、以下の情報が自動で記録されます：<br>
+      　・お名前 ・アイコン<br>
+      　・担当者名 ・登録日時<br><br>
+      <span style="color:#888;font-size:11px;">
+        ※ 担当者リストはスプレッドシートの「担当者シート」で<br>
+        　 管理者が追加・変更できます
+      </span>
+    </div>
+  </div>
+
+  <button class="setup-btn" id="setupBtn" disabled onclick="doRegister()">
+    登録してはじめる →
+  </button>
 
 </div>
 
 <!-- 登録完了ポップアップ -->
 <div class="done-overlay" id="doneOverlay">
-<div class="done-card">
-<div class="done-emoji">🎉</div>
-<div class="done-title" id="doneTitle">登録できました！</div>
-<div class="done-sub" id="doneSub"></div>
-<div class="done-sheet" id="doneSheet"></div>
-<button class="done-btn" onclick="goToMain()">アプリをはじめる</button>
-</div>
+  <div class="done-card">
+    <div class="done-emoji">🎉</div>
+    <div class="done-title" id="doneTitle">登録できました！</div>
+    <div class="done-sub" id="doneSub"></div>
+    <div class="done-sheet" id="doneSheet"></div>
+    <button class="done-btn" onclick="goToMain()">アプリをはじめる</button>
+  </div>
 </div>
 
 <!-- ━━━━━━━━━━━━━━━━━━━━━━
-メイン画面
+     メイン画面
 ━━━━━━━━━━━━━━━━━━━━━━ -->
 <div id="mainScreen" class="hidden">
 
-<div class="header">
-<div class="header-sub">MIMAMORI APP · 見守りアプリ</div>
-<div class="header-title">おおくら<span>み</span>まもり</div>
-<div style="margin-bottom:9px;">
-<div class="user-strip">
-<span id="mainAvatar" style="font-size:20px;">👵</span>
-<span id="mainName" style="font-size:14px;font-weight:700;color:var(--text);"></span>
-<span class="status-badge">✓ 本日確認済</span>
-</div>
-</div>
-<div class="datetime-bar">
-<span class="dot">☀</span>
-<span id="datetime">読み込み中…</span>
-</div>
-</div>
+  <div class="header">
+    <div class="header-sub">MIMAMORI APP · 見守りアプリ</div>
+    <div class="header-title">おおくら<span>み</span>まもり</div>
+    <div style="margin-bottom:9px;">
+      <div class="user-strip">
+        <span id="mainAvatar" style="font-size:20px;">👵</span>
+        <span id="mainName" style="font-size:14px;font-weight:700;color:var(--text);"></span>
+        <span class="status-badge">✓ 本日確認済</span>
+      </div>
+    </div>
+    <div class="datetime-bar">
+      <span class="dot">☀</span>
+      <span id="datetime">読み込み中…</span>
+    </div>
+  </div>
 
-<!-- 担当者表示バー -->
-<div style="margin:12px auto 0;width:calc(100% - 40px);max-width:360px;">
-<div style="background:white;border-radius:12px;padding:10px 16px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;">
-<span style="font-size:18px;" id="mainTantouAvatar">👨</span>
-<div style="flex:1;">
-<div style="font-size:10px;color:var(--text-light);">担当者</div>
-<div style="font-size:14px;font-weight:700;color:var(--text);" id="mainTantouName">—</div>
-</div>
-<span style="font-size:11px;color:var(--text-light);" id="mainTantouRole"></span>
-</div>
-</div>
+  <!-- 担当者表示バー -->
+  <div style="margin:12px auto 0;width:calc(100% - 40px);max-width:360px;">
+    <div style="background:white;border-radius:12px;padding:10px 16px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px;" id="mainTantouAvatar">👨</span>
+      <div style="flex:1;">
+        <div style="font-size:10px;color:var(--text-light);">担当者</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);" id="mainTantouName">—</div>
+      </div>
+      <span style="font-size:11px;color:var(--text-light);" id="mainTantouRole"></span>
+    </div>
+  </div>
 
-<div class="buttons-section">
-<div class="section-label">▼ ボタンを押してください</div>
+  <div class="buttons-section">
+    <div class="section-label">▼ ボタンを押してください</div>
 
-<button class="btn btn-morning" onclick="showBubble('morning')">
-<div class="btn-inner">
-<div class="btn-icon">🌅</div>
-<div class="btn-text">
-<div class="btn-title">おはよう！</div>
-<div class="btn-sub">朝の元気チェック</div>
-</div>
-<div class="btn-arrow">▶</div>
-</div>
-</button>
+    <button class="btn btn-morning" onclick="showBubble('morning')">
+      <div class="btn-inner">
+        <div class="btn-icon">🌅</div>
+        <div class="btn-text">
+          <div class="btn-title">おはよう！</div>
+          <div class="btn-sub">朝の元気チェック</div>
+        </div>
+        <div class="btn-arrow">▶</div>
+      </div>
+    </button>
 
-<button class="btn btn-night" onclick="showBubble('night')">
-<div class="btn-inner">
-<div class="btn-icon">🌙</div>
-<div class="btn-text">
-<div class="btn-title">おやすみなさい</div>
-<div class="btn-sub">夜の就寝チェック</div>
-</div>
-<div class="btn-arrow">▶</div>
-</div>
-</button>
+    <button class="btn btn-night" onclick="showBubble('night')">
+      <div class="btn-inner">
+        <div class="btn-icon">🌙</div>
+        <div class="btn-text">
+          <div class="btn-title">おやすみなさい</div>
+          <div class="btn-sub">夜の就寝チェック</div>
+        </div>
+        <div class="btn-arrow">▶</div>
+      </div>
+    </button>
 
-<button class="btn btn-consult" onclick="showBubble('consult')">
-<div class="btn-inner">
-<div class="btn-icon">💬</div>
-<div class="btn-text">
-<div class="btn-title">ご相談</div>
-<div class="btn-sub" id="consultSub">担当者へ連絡が届きます</div>
-</div>
-<div class="btn-arrow">▶</div>
-</div>
-</button>
-</div>
+    <button class="btn btn-consult" onclick="showBubble('consult')">
+      <div class="btn-inner">
+        <div class="btn-icon">💬</div>
+        <div class="btn-text">
+          <div class="btn-title">ご相談</div>
+          <div class="btn-sub" id="consultSub">担当者へ連絡が届きます</div>
+        </div>
+        <div class="btn-arrow">▶</div>
+      </div>
+    </button>
+  </div>
 
-<div class="log-section">
-<div class="log-title">📋 本日の記録</div>
-<div class="log-card">
-<div class="log-item">
-<div class="log-dot dot-morning"></div>
-<div class="log-content">
-<div class="log-type">おはよう！</div>
-<div class="log-time" id="logMorning">—</div>
-</div>
-<div class="log-check" id="checkMorning" style="opacity:0.2">✓</div>
-</div>
-<div class="log-item">
-<div class="log-dot dot-night"></div>
-<div class="log-content">
-<div class="log-type">おやすみなさい</div>
-<div class="log-time" id="logNight">—</div>
-</div>
-<div class="log-check" id="checkNight" style="opacity:0.2">✓</div>
-</div>
-<div class="log-item">
-<div class="log-dot dot-consult"></div>
-<div class="log-content">
-<div class="log-type">ご相談</div>
-<div class="log-time" id="logConsult">—</div>
-</div>
-<div class="log-check" id="checkConsult" style="opacity:0.2">✓</div>
-</div>
-</div>
-</div>
+  <div class="log-section">
+    <div class="log-title">📋 本日の記録</div>
+    <div class="log-card">
+      <div class="log-item">
+        <div class="log-dot dot-morning"></div>
+        <div class="log-content">
+          <div class="log-type">おはよう！</div>
+          <div class="log-time" id="logMorning">—</div>
+        </div>
+        <div class="log-check" id="checkMorning" style="opacity:0.2">✓</div>
+      </div>
+      <div class="log-item">
+        <div class="log-dot dot-night"></div>
+        <div class="log-content">
+          <div class="log-type">おやすみなさい</div>
+          <div class="log-time" id="logNight">—</div>
+        </div>
+        <div class="log-check" id="checkNight" style="opacity:0.2">✓</div>
+      </div>
+      <div class="log-item">
+        <div class="log-dot dot-consult"></div>
+        <div class="log-content">
+          <div class="log-type">ご相談</div>
+          <div class="log-time" id="logConsult">—</div>
+        </div>
+        <div class="log-check" id="checkConsult" style="opacity:0.2">✓</div>
+      </div>
+    </div>
+  </div>
 
-<div class="footer-note">※ 記録はクラウドに自動保存されます</div>
+  <div class="footer-note">※ 記録はクラウドに自動保存されます</div>
 </div>
 
 <!-- ボタン押下 吹き出し -->
 <div class="bubble-overlay" id="overlay">
-<div class="bubble">
-<div class="bubble-emoji" id="bubbleEmoji"></div>
-<div class="bubble-message" id="bubbleMessage"></div>
-<div class="bubble-sub" id="bubbleSub"></div>
-<button class="bubble-close" onclick="hideBubble()">とじる</button>
-</div>
+  <div class="bubble">
+    <div class="bubble-emoji" id="bubbleEmoji"></div>
+    <div class="bubble-message" id="bubbleMessage"></div>
+    <div class="bubble-sub" id="bubbleSub"></div>
+    <button class="bubble-close" onclick="hideBubble()">とじる</button>
+  </div>
 </div>
 
 <script>
@@ -473,91 +531,110 @@ var tantouData = [];
 
 // 担当者リストをスプレッドシートから取得
 function loadTantouList() {
-fetch(GAS_URL, { method: 'GET' })
-.then(function(res) { return res.json(); })
-.then(function(json) {
-tantouData = json.tantouList || [];
-renderTantouList();
-})
-.catch(function() {
-// 読み込み失敗時はエラー表示
-document.getElementById('tantouList').innerHTML =
-'<div style="text-align:center;padding:16px;color:#e76f51;font-size:13px;">担当者リストの読み込みに失敗しました。<br>ページを再読み込みしてください。</div>';
-});
+  fetch(GAS_URL, { method: 'GET' })
+    .then(function(res) { return res.json(); })
+    .then(function(json) {
+      tantouData = json.tantouList || [];
+      renderTantouList();
+    })
+    .catch(function() {
+      // 読み込み失敗時はエラー表示
+      document.getElementById('tantouList').innerHTML =
+        '<div style="text-align:center;padding:16px;color:#e76f51;font-size:13px;">担当者リストの読み込みに失敗しました。<br>ページを再読み込みしてください。</div>';
+    });
 }
 
 // 担当者リストをHTMLに描画
 function renderTantouList() {
-var list = document.getElementById('tantouList');
-if (tantouData.length === 0) {
-list.innerHTML = '<div style="text-align:center;padding:16px;color:#e76f51;font-size:13px;">担当者が登録されていません。<br>スプレッドシートの担当者シートを確認してください。</div>';
-return;
-}
-var avatars = ['👨','👩','🧓','👴','👵','🐱'];
-list.innerHTML = '';
-tantouData.forEach(function(t, idx) {
-var av = avatars[idx % avatars.length];
-var div = document.createElement('div');
-div.className = 'tantou-item';
-div.onclick = function() { selectTantou(div, t.name, t.role, av); };
-div.innerHTML =
-'<div class="tantou-avatar">' + av + '</div>' +
-'<div class="tantou-info">' +
-'<div class="tantou-name">' + t.name + '</div>' +
-'<div class="tantou-role">' + t.role + '</div>' +
-'</div>' +
-'<div class="tantou-check">✓</div>';
-list.appendChild(div);
-});
+  var list = document.getElementById('tantouList');
+  if (tantouData.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:16px;color:#e76f51;font-size:13px;">担当者が登録されていません。<br>スプレッドシートの担当者シートを確認してください。</div>';
+    return;
+  }
+  var avatars = ['👨','👩','🧓','👴','👵','🐱'];
+  list.innerHTML = '';
+  tantouData.forEach(function(t, idx) {
+    var av = avatars[idx % avatars.length];
+    var div = document.createElement('div');
+    div.className = 'tantou-item';
+    div.onclick = function() { selectTantou(div, t.name, t.role, av); };
+    div.innerHTML =
+      '<div class="tantou-avatar">' + av + '</div>' +
+      '<div class="tantou-info">' +
+        '<div class="tantou-name">' + t.name + '</div>' +
+        '<div class="tantou-role">' + t.role + '</div>' +
+      '</div>' +
+      '<div class="tantou-check">✓</div>';
+    list.appendChild(div);
+  });
 }
 
 // ━━━ セットアップ ━━━
 var selectedAvatar = '👵';
-var userName = '';
+var userName       = '';
 var selectedTantou = null;
 
 function selectAvatar(btn, emoji) {
-document.querySelectorAll('.avatar-btn').forEach(function(b){ b.classList.remove('selected'); });
-btn.classList.add('selected');
-selectedAvatar = emoji;
+  document.querySelectorAll('.avatar-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  selectedAvatar = emoji;
 }
 
 function selectTantou(item, name, role, avatar) {
-// 前の選択を解除
-document.querySelectorAll('.tantou-item').forEach(function(el){ el.classList.remove('selected'); });
-item.classList.add('selected');
-selectedTantou = { name:name, role:role, avatar:avatar };
+  // 前の選択を解除
+  document.querySelectorAll('.tantou-item').forEach(function(el){ el.classList.remove('selected'); });
+  item.classList.add('selected');
+  selectedTantou = { name:name, role:role, avatar:avatar };
 
-// プレビュー表示
-document.getElementById('tantouPreviewText').textContent =
-avatar + ' ' + name + '（' + role + '）さんへ通知されます';
-document.getElementById('tantouPreview').classList.add('show');
+  // プレビュー表示
+  document.getElementById('tantouPreviewText').textContent =
+    avatar + ' ' + name + '（' + role + '）さんへ通知されます';
+  document.getElementById('tantouPreview').classList.add('show');
 
-// ステップバー更新
-document.getElementById('step2').classList.add('done');
-document.getElementById('step3').classList.add('active');
+  // ステップバー更新
+  document.getElementById('step2').classList.add('done');
+  document.getElementById('step3').classList.add('active');
 
-checkReady();
+  checkReady();
 }
 
 function checkReady() {
-var name = document.getElementById('inputName').value.trim();
-var ok = (name.length > 0 && selectedTantou !== null);
-document.getElementById('setupBtn').disabled = !ok;
+  var name = document.getElementById('inputName').value.trim();
+  var ok = (name.length > 0 && selectedTantou !== null);
+  document.getElementById('setupBtn').disabled = !ok;
 
-// ステップ1完了
-if (name.length > 0) {
-document.getElementById('step1').classList.add('done');
-document.getElementById('step2').classList.add('active');
-}
+  // ステップ1完了
+  if (name.length > 0) {
+    document.getElementById('step1').classList.add('done');
+    document.getElementById('step2').classList.add('active');
+  }
 }
 
 function nowStr() {
-var now = new Date();
-var days = ['日','月','火','水','木','金','土'];
-return now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日'
-+ '（' + days[now.getDay()] + '）　'
-+ ('0'+now.getHours()).slice(-2) + ':' + ('0'+now.getMinutes()).slice(-2);
+  var now = new Date();
+  var days = ['日','月','火','水','木','金','土'];
+  return now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日'
+    + '（' + days[now.getDay()] + '）　'
+    + ('0'+now.getHours()).slice(-2) + ':' + ('0'+now.getMinutes()).slice(-2);
+}
+
+// ━━━ アクセスコード設定 ━━━
+// ★ このコードを対象者だけに教えてください
+// ★ 変更したい場合はこの数字を書き換えてください
+var ACCESS_CODE = '1234';
+
+function checkCode() {
+  var input = document.getElementById('codeInput').value.trim();
+  var error = document.getElementById('codeError');
+  if (input === ACCESS_CODE) {
+    document.getElementById('codeScreen').classList.add('hidden');
+    document.getElementById('setupScreen').classList.remove('hidden');
+    error.classList.remove('show');
+  } else {
+    error.classList.add('show');
+    document.getElementById('codeInput').value = '';
+    document.getElementById('codeInput').focus();
+  }
 }
 
 // ━━━ Apps Script URL ━━━
@@ -565,50 +642,50 @@ var GAS_URL = 'https://script.google.com/macros/s/AKfycbz-5Dxi9Y7cPAQL6S3ZefphJu
 
 // スプレッドシートにデータを送信する関数
 function sendToSheet(type, name, tantou, avatar) {
-var data = { type: type, name: name, tantou: tantou, avatar: avatar || '' };
-fetch(GAS_URL, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(data)
-}).catch(function(err) {
-console.log('送信エラー：', err);
-});
+  var data = { type: type, name: name, tantou: tantou, avatar: avatar || '' };
+  fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(function(err) {
+    console.log('送信エラー：', err);
+  });
 }
 
 function doRegister() {
-userName = document.getElementById('inputName').value.trim();
-if (!userName || !selectedTantou) return;
+  userName = document.getElementById('inputName').value.trim();
+  if (!userName || !selectedTantou) return;
 
-var t = nowStr();
-document.getElementById('doneTitle').textContent = userName + ' さん、登録完了！';
-document.getElementById('doneSub').textContent = 'これからよろしくお願いします。\n毎日のボタンを忘れずに！';
-document.getElementById('doneSheet').innerHTML =
-'📊 スプレッドシートに記録しました<br>' +
-'　ご利用者：' + selectedAvatar + ' ' + userName + '<br>' +
-'　担当者　：' + selectedTantou.avatar + ' ' + selectedTantou.name +
-'（' + selectedTantou.role + '）<br>' +
-'　登録日時：' + t;
+  var t = nowStr();
+  document.getElementById('doneTitle').textContent = userName + ' さん、登録完了！';
+  document.getElementById('doneSub').textContent   = 'これからよろしくお願いします。\n毎日のボタンを忘れずに！';
+  document.getElementById('doneSheet').innerHTML =
+    '📊 スプレッドシートに記録しました<br>' +
+    '　ご利用者：' + selectedAvatar + ' ' + userName + '<br>' +
+    '　担当者　：' + selectedTantou.avatar + ' ' + selectedTantou.name +
+    '（' + selectedTantou.role + '）<br>' +
+    '　登録日時：' + t;
 
-document.getElementById('doneOverlay').classList.add('show');
-// 利用者シートに登録情報を送信
-sendToSheet('register', userName, selectedTantou.name, selectedAvatar);
+  document.getElementById('doneOverlay').classList.add('show');
+  // 利用者シートに登録情報を送信
+  sendToSheet('register', userName, selectedTantou.name, selectedAvatar);
 }
 
 function goToMain() {
-document.getElementById('doneOverlay').classList.remove('show');
-document.getElementById('setupScreen').classList.add('hidden');
+  document.getElementById('doneOverlay').classList.remove('show');
+  document.getElementById('setupScreen').classList.add('hidden');
 
-// メイン画面に反映
-document.getElementById('mainAvatar').textContent = selectedAvatar;
-document.getElementById('mainName').textContent = userName + ' さん';
-document.getElementById('mainTantouAvatar').textContent = selectedTantou.avatar;
-document.getElementById('mainTantouName').textContent = selectedTantou.name;
-document.getElementById('mainTantouRole').textContent = selectedTantou.role;
-document.getElementById('consultSub').textContent = selectedTantou.name + ' さんへ連絡';
+  // メイン画面に反映
+  document.getElementById('mainAvatar').textContent      = selectedAvatar;
+  document.getElementById('mainName').textContent        = userName + ' さん';
+  document.getElementById('mainTantouAvatar').textContent = selectedTantou.avatar;
+  document.getElementById('mainTantouName').textContent  = selectedTantou.name;
+  document.getElementById('mainTantouRole').textContent  = selectedTantou.role;
+  document.getElementById('consultSub').textContent      = selectedTantou.name + ' さんへ連絡';
 
-document.getElementById('mainScreen').classList.remove('hidden');
-updateTime();
+  document.getElementById('mainScreen').classList.remove('hidden');
+  updateTime();
 }
 
 // ページ読み込み時に担当者リストを取得
@@ -616,50 +693,50 @@ loadTantouList();
 
 // ━━━ メイン画面 ━━━
 function updateTime() {
-document.getElementById('datetime').textContent = nowStr();
+  document.getElementById('datetime').textContent = nowStr();
 }
 setInterval(updateTime, 10000);
 
 var messages = {
-morning: { emoji:'🌅', msg:'おはようございます！\n今日も楽しい1日を', sub:'記録しました ✓', voice:'おはようございます！今日も楽しい一日を。', logId:'logMorning', checkId:'checkMorning' },
-night: { emoji:'🌙', msg:'ぐっすり\nおやすみなさい。', sub:'記録しました ✓', voice:'ぐっすりおやすみなさい。', logId:'logNight', checkId:'checkNight' },
-consult: { emoji:'💬', msg:'担当者へ\n連絡しました。\nしばらくお待ちください。', sub:'メールで通知済み ✓', voice:'担当者へ連絡しました。しばらくお待ちください。', logId:'logConsult', checkId:'checkConsult' }
+  morning: { emoji:'🌅', msg:'おはようございます！\n今日も楽しい1日を', sub:'記録しました ✓',  voice:'おはようございます！今日も楽しい一日を。', logId:'logMorning', checkId:'checkMorning' },
+  night:   { emoji:'🌙', msg:'ぐっすり\nおやすみなさい。',              sub:'記録しました ✓',  voice:'ぐっすりおやすみなさい。',                logId:'logNight',   checkId:'checkNight'   },
+  consult: { emoji:'💬', msg:'担当者へ\n連絡しました。\nしばらくお待ちください。', sub:'メールで通知済み ✓', voice:'担当者へ連絡しました。しばらくお待ちください。', logId:'logConsult', checkId:'checkConsult' }
 };
 
 function speak(text) {
-if (!window.speechSynthesis) return;
-window.speechSynthesis.cancel();
-var utter = new SpeechSynthesisUtterance(text);
-utter.lang = 'ja-JP'; utter.rate = 0.9; utter.pitch = 1.1;
-var voices = window.speechSynthesis.getVoices();
-var jaVoice = voices.find(function(v){ return v.lang === 'ja-JP'; });
-if (jaVoice) utter.voice = jaVoice;
-window.speechSynthesis.speak(utter);
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP'; utter.rate = 0.9; utter.pitch = 1.1;
+  var voices = window.speechSynthesis.getVoices();
+  var jaVoice = voices.find(function(v){ return v.lang === 'ja-JP'; });
+  if (jaVoice) utter.voice = jaVoice;
+  window.speechSynthesis.speak(utter);
 }
 if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
-window.speechSynthesis.onvoiceschanged = function(){ window.speechSynthesis.getVoices(); };
+  window.speechSynthesis.onvoiceschanged = function(){ window.speechSynthesis.getVoices(); };
 }
 
 function showBubble(type) {
-var m = messages[type];
-var now = new Date();
-var timeStr = ('0'+now.getHours()).slice(-2) + ':' + ('0'+now.getMinutes()).slice(-2);
-document.getElementById('bubbleEmoji').textContent = m.emoji;
-document.getElementById('bubbleMessage').textContent = m.msg;
-document.getElementById('bubbleSub').textContent = m.sub;
-document.getElementById('overlay').classList.add('show');
-speak(m.voice);
-document.getElementById(m.logId).textContent = '今日 ' + timeStr;
-document.getElementById(m.checkId).style.opacity = '1';
-// スプレッドシートに記録を送信
-sendToSheet(type, userName, selectedTantou ? selectedTantou.name : '');
+  var m = messages[type];
+  var now = new Date();
+  var timeStr = ('0'+now.getHours()).slice(-2) + ':' + ('0'+now.getMinutes()).slice(-2);
+  document.getElementById('bubbleEmoji').textContent   = m.emoji;
+  document.getElementById('bubbleMessage').textContent = m.msg;
+  document.getElementById('bubbleSub').textContent     = m.sub;
+  document.getElementById('overlay').classList.add('show');
+  speak(m.voice);
+  document.getElementById(m.logId).textContent       = '今日 ' + timeStr;
+  document.getElementById(m.checkId).style.opacity   = '1';
+  // スプレッドシートに記録を送信
+  sendToSheet(type, userName, selectedTantou ? selectedTantou.name : '');
 }
 
 function hideBubble() {
-document.getElementById('overlay').classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
 }
 document.getElementById('overlay').addEventListener('click', function(e) {
-if (e.target === this) hideBubble();
+  if (e.target === this) hideBubble();
 });
 </script>
 </body>
