@@ -264,7 +264,7 @@
         <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
         <div class="node node-process">
           <span class="node-icon">💾</span>スマホに登録情報を保存
-          <div class="node-sub">次回から自動でメイン画面へ</div>
+          <div class="node-sub">ローカルストレージに保存<br>次回から自動でメイン画面へ</div>
         </div>
         <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
         <div class="node node-end" style="border-radius:16px;">
@@ -319,6 +319,13 @@
     <div class="node node-sheet">
       <span class="node-icon">📊</span>記録シートに1行追記
       <div class="node-sub">記録日時・対象者名・種別・担当者名</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-process" style="border-color:#9B59B6;">
+      <span class="node-icon">💾</span>タイムスタンプをスマホに保存
+      <div class="node-sub">ローカルストレージに当日の記録時刻を保存<br>「本日の記録」欄に時刻を表示・アプリを閉じても保持<br>翌日になると自動でリセット</div>
     </div>
 
     <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
@@ -463,6 +470,51 @@
     <div class="legend-item"><div class="legend-box" style="background:#E8F8F5;border:2px solid var(--blue);"></div>スプレッドシート</div>
     <div class="legend-item"><div class="legend-box" style="background:#FFF3E0;border:2px solid var(--orange);"></div>メール送信</div>
     <div class="legend-item"><div class="legend-box" style="background:var(--pink);border:2px solid var(--pink-dd);"></div>セットアップ</div>
+    <div class="legend-item"><div class="legend-box" style="background:white;border:2px solid #9B59B6;"></div>スマホ内保存（ローカルストレージ）</div>
+  </div>
+</div>
+
+
+<!-- ━━━ データ保存場所の一覧 ━━━ -->
+<div class="section" style="margin-top:48px;">
+  <div class="section-title">📦 データの保存場所まとめ</div>
+  <div style="max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:12px;">
+
+    <div class="node node-process" style="border-color:#9B59B6;text-align:left;padding:16px 20px;">
+      <div style="font-size:13px;font-weight:700;color:#9B59B6;margin-bottom:8px;">💾 スマホ内（ローカルストレージ）</div>
+      <div style="font-size:12px;color:var(--gray);line-height:1.9;">
+        ・<b>登録情報</b>（mimamoriUser）<br>
+        　お名前・アイコン・担当者名<br>
+        　→ 次回起動時にセットアップをスキップ<br>
+        ・<b>当日の記録時刻</b>（mimamoriLog）<br>
+        　おはよう・おやすみ・ご相談の時刻<br>
+        　→「本日の記録」欄に表示・翌日自動リセット
+      </div>
+    </div>
+
+    <div class="node node-sheet" style="text-align:left;padding:16px 20px;">
+      <div style="font-size:13px;font-weight:700;color:var(--blue-d);margin-bottom:8px;">📊 Googleスプレッドシート（クラウド）</div>
+      <div style="font-size:12px;color:var(--gray);line-height:1.9;">
+        ・<b>記録シート</b><br>
+        　全対象者のボタン操作履歴（永久蓄積）<br>
+        ・<b>担当者シート</b><br>
+        　担当者名・役割・メールアドレス<br>
+        ・<b>利用者シート</b><br>
+        　対象者名・アイコン・担当者・登録日<br>
+        ・<b>今日の状況シート</b><br>
+        　全員の当日状況（毎朝3時自動リセット）
+      </div>
+    </div>
+
+    <div class="node node-mail" style="text-align:left;padding:16px 20px;">
+      <div style="font-size:13px;font-weight:700;color:#E65100;margin-bottom:8px;">📧 Gmail（メール）</div>
+      <div style="font-size:12px;color:var(--gray);line-height:1.9;">
+        ・<b>ご相談通知メール</b><br>
+        　「ご相談」ボタンが押された時だけ送信<br>
+        　担当者のGmailアドレスに届く
+      </div>
+    </div>
+
   </div>
 </div>
 
