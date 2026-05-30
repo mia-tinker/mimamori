@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おおくらみまもり システムフローチャート</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink:     #FFB7C5;
+    --pink-d:   #FF8FAB;
+    --pink-dd:  #E75480;
+    --orange:   #F8961E;
+    --yellow:   #F9C74F;
+    --green:    #90BE6D;
+    --green-d:  #5A8A3C;
+    --blue:     #2A9D8F;
+    --blue-d:   #264653;
+    --red:      #E76F51;
+    --gray:     #636E72;
+    --light:    #F8F9FA;
+    --white:    #FFFFFF;
+    --shadow:   0 4px 20px rgba(0,0,0,0.10);
+    --shadow-lg:0 8px 32px rgba(0,0,0,0.14);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:'Zen Maru Gothic','Noto Sans JP',sans-serif;
+    background: #FFF5F7;
+    padding: 32px 16px 60px;
+    min-width: 320px;
+  }
+
+  /* ヘッダー */
+  .doc-header {
+    text-align:center; margin-bottom:40px;
+  }
+  .doc-header h1 {
+    font-size:22px; font-weight:700; color:var(--blue-d);
+    margin-bottom:6px;
+  }
+  .doc-header p {
+    font-size:12px; color:var(--gray); letter-spacing:1px;
+  }
+
+  /* セクション */
+  .section {
+    margin-bottom:48px;
+  }
+  .section-title {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--blue-d); color:white;
+    border-radius:50px; padding:8px 20px;
+    font-size:14px; font-weight:700;
+    margin-bottom:24px; letter-spacing:1px;
+  }
+
+  /* フローのコンテナ */
+  .flow {
+    display:flex; flex-direction:column; align-items:center; gap:0;
+  }
+
+  /* ノード共通 */
+  .node {
+    width:100%; max-width:420px;
+    border-radius:16px; padding:14px 20px;
+    text-align:center; font-size:14px; font-weight:700;
+    box-shadow:var(--shadow); position:relative;
+    line-height:1.5;
+  }
+  .node-sub {
+    font-size:11px; font-weight:400; margin-top:4px;
+    opacity:0.85;
+  }
+
+  /* ノード種別 */
+  .node-start {
+    background:var(--blue-d); color:white;
+    border-radius:50px; font-size:15px;
+  }
+  .node-action {
+    background:white; color:var(--blue-d);
+    border:2.5px solid var(--pink);
+  }
+  .node-decision {
+    background:var(--yellow); color:var(--blue-d);
+    transform:none; border-radius:12px;
+    border:2.5px solid var(--orange);
+  }
+  .node-process {
+    background:white; color:var(--blue-d);
+    border:2.5px solid var(--blue);
+  }
+  .node-sheet {
+    background:#E8F8F5; color:var(--blue-d);
+    border:2.5px solid var(--blue);
+  }
+  .node-mail {
+    background:#FFF3E0; color:#E65100;
+    border:2.5px solid var(--orange);
+  }
+  .node-end {
+    background:var(--green-d); color:white;
+    border-radius:50px;
+  }
+  .node-pink {
+    background:var(--pink); color:var(--blue-d);
+    border:2.5px solid var(--pink-dd);
+  }
+  .node-warn {
+    background:#FFE5E5; color:var(--red);
+    border:2.5px solid var(--red);
+  }
+
+  /* 矢印 */
+  .arrow {
+    display:flex; flex-direction:column; align-items:center;
+    margin:2px 0;
+  }
+  .arrow-line {
+    width:2.5px; height:24px;
+    background:var(--gray); opacity:0.5;
+  }
+  .arrow-head {
+    width:0; height:0;
+    border-left:7px solid transparent;
+    border-right:7px solid transparent;
+    border-top:10px solid var(--gray);
+    opacity:0.5;
+  }
+  .arrow-label {
+    font-size:11px; color:var(--gray);
+    background:white; border-radius:20px;
+    padding:2px 10px; margin:2px 0;
+    border:1px solid #ddd;
+  }
+
+  /* 分岐ブロック */
+  .branch {
+    width:100%; max-width:420px;
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:12px; margin:4px 0;
+  }
+  .branch-col {
+    display:flex; flex-direction:column; align-items:center; gap:0;
+  }
+  .branch-label {
+    font-size:11px; font-weight:700;
+    padding:3px 12px; border-radius:20px;
+    margin-bottom:6px;
+  }
+  .branch-yes { background:#E8F5E9; color:var(--green-d); }
+  .branch-no  { background:#FFF3E0; color:#E65100; }
+
+  /* ボタンノード */
+  .btn-group {
+    width:100%; max-width:420px;
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:10px; margin:4px 0;
+  }
+  .btn-node {
+    border-radius:14px; padding:12px 8px;
+    text-align:center; font-size:12px; font-weight:700;
+    box-shadow:var(--shadow); line-height:1.5;
+  }
+  .btn-morning { background:linear-gradient(135deg,var(--yellow),var(--orange)); color:white; }
+  .btn-night   { background:linear-gradient(135deg,var(--blue-d),var(--blue));   color:white; }
+  .btn-consult { background:linear-gradient(135deg,var(--red),#C1440E);          color:white; }
+
+  /* レジェンド */
+  .legend {
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-top:12px; justify-content:center;
+  }
+  .legend-item {
+    display:flex; align-items:center; gap:6px;
+    font-size:11px; color:var(--gray);
+  }
+  .legend-box {
+    width:16px; height:16px; border-radius:4px;
+  }
+
+  /* 横線 */
+  .divider {
+    width:100%; max-width:420px;
+    height:1px; background:#E0E0E0;
+    margin:8px 0;
+  }
+
+  /* アイコン */
+  .node-icon { font-size:18px; margin-right:4px; }
+
+  @media print {
+    body { background:white; padding:16px; }
+    .section { page-break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>🌸 おおくらみまもりアプリ</h1>
+  <p>システム処理フローチャート　／　作成：岩永美樹　2026年5月</p>
+</div>
+
+<!-- ━━━ フロー1：起動時 ━━━ -->
+<div class="section">
+  <div class="section-title">📱 フロー① アプリ起動時の処理</div>
+  <div class="flow">
+
+    <div class="node node-start">
+      <span class="node-icon">▶</span>アプリを起動
+      <div class="node-sub">ホーム画面のアイコンをタップ</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-process">
+      <span class="node-icon">🔍</span>スマホに登録情報があるか確認
+      <div class="node-sub">ローカルストレージを参照</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-decision">
+      登録済みのスマホですか？
+    </div>
+
+    <div class="branch">
+      <div class="branch-col">
+        <div class="branch-label branch-yes">✅ はい（2回目以降）</div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-end" style="border-radius:16px;">
+          <span class="node-icon">🏠</span>メイン画面へ
+          <div class="node-sub">すぐに使える！</div>
+        </div>
+      </div>
+      <div class="branch-col">
+        <div class="branch-label branch-no">❌ いいえ（初回）</div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-warn">
+          <span class="node-icon">🔑</span>アクセスコード入力画面
+          <div class="node-sub">4桁のコードを入力</div>
+        </div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-decision" style="font-size:12px;">
+          コードは正しいですか？
+        </div>
+        <div class="arrow">
+          <div class="arrow-line"></div>
+          <div class="arrow-label">✅ 正しい</div>
+          <div class="arrow-line"></div>
+          <div class="arrow-head"></div>
+        </div>
+        <div class="node node-pink">
+          <span class="node-icon">📝</span>セットアップ画面
+          <div class="node-sub">名前・アイコン・担当者を設定</div>
+        </div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-sheet">
+          <span class="node-icon">📊</span>利用者シートに登録
+          <div class="node-sub">Googleスプレッドシートに自動記録</div>
+        </div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-process">
+          <span class="node-icon">💾</span>スマホに登録情報を保存
+          <div class="node-sub">次回から自動でメイン画面へ</div>
+        </div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-end" style="border-radius:16px;">
+          <span class="node-icon">🏠</span>メイン画面へ
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ━━━ フロー2：メイン画面 ━━━ -->
+<div class="section">
+  <div class="section-title">👆 フロー② ボタンを押した時の処理</div>
+  <div class="flow">
+
+    <div class="node node-start">
+      <span class="node-icon">🏠</span>メイン画面
+      <div class="node-sub">3つのボタンが表示されている</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="btn-group">
+      <div class="btn-node btn-morning">🌅<br>おはよう！</div>
+      <div class="btn-node btn-night">🌙<br>おやすみ</div>
+      <div class="btn-node btn-consult">💬<br>ご相談</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-action">
+      <span class="node-icon">🔊</span>音声メッセージを再生
+      <div class="node-sub">Web Speech APIがブラウザ内で再生</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-action">
+      <span class="node-icon">💬</span>メッセージポップアップを表示
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-process">
+      <span class="node-icon">📡</span>Apps Scriptにデータを送信
+      <div class="node-sub">種別・対象者名・担当者名を送信</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-sheet">
+      <span class="node-icon">📊</span>記録シートに1行追記
+      <div class="node-sub">記録日時・対象者名・種別・担当者名</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-decision">
+      「ご相談」ボタンでしたか？
+    </div>
+
+    <div class="branch">
+      <div class="branch-col">
+        <div class="branch-label branch-yes">✅ はい</div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-process">
+          <span class="node-icon">🔍</span>担当者シートから<br>メールアドレスを検索
+        </div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-mail">
+          <span class="node-icon">📧</span>担当者のGmailに<br>通知メールを送信
+          <div class="node-sub">件名：【おおくらみまもり】ご相談の通知</div>
+        </div>
+      </div>
+      <div class="branch-col">
+        <div class="branch-label branch-no">❌ いいえ</div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-action" style="border-color:var(--gray);color:var(--gray);">
+          メール送信なし
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-sheet">
+      <span class="node-icon">📊</span>今日の状況シートを更新
+      <div class="node-sub">全対象者の状態を最新に更新</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-end">
+      <span class="node-icon">✅</span>処理完了
+    </div>
+
+  </div>
+</div>
+
+<!-- ━━━ フロー3：毎朝の自動処理 ━━━ -->
+<div class="section">
+  <div class="section-title">⏰ フロー③ 毎朝3〜4時の自動処理</div>
+  <div class="flow">
+
+    <div class="node node-start">
+      <span class="node-icon">⏰</span>Apps Scriptのタイマーが起動
+      <div class="node-sub">毎朝3時〜4時に自動実行</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-process">
+      <span class="node-icon">🔍</span>利用者シートから全対象者を取得
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-sheet">
+      <span class="node-icon">📊</span>今日の状況シートをリセット
+      <div class="node-sub">全員を「⚠️ 未確認」に戻す</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-end">
+      <span class="node-icon">✅</span>リセット完了
+      <div class="node-sub">担当者が確認すると全員「未確認」の状態</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ━━━ フロー4：担当者の確認 ━━━ -->
+<div class="section">
+  <div class="section-title">👀 フロー④ 担当者の日常確認</div>
+  <div class="flow">
+
+    <div class="node node-start">
+      <span class="node-icon">👩</span>担当者がスプレッドシートを開く
+      <div class="node-sub">毎朝「今日の状況」シートを確認</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-sheet">
+      <span class="node-icon">📊</span>今日の状況シートを確認
+      <div class="node-sub">全対象者の状態が一覧表示</div>
+    </div>
+
+    <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-decision">
+      「相談あり」または「未確認が続いている」人はいますか？
+    </div>
+
+    <div class="branch">
+      <div class="branch-col">
+        <div class="branch-label branch-yes">✅ いる</div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-mail">
+          <span class="node-icon">📞</span>対象者に電話または訪問
+        </div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-end" style="border-radius:16px;background:var(--green-d);">
+          <span class="node-icon">✅</span>対応完了
+        </div>
+      </div>
+      <div class="branch-col">
+        <div class="branch-label branch-no">❌ いない</div>
+        <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+        <div class="node node-end" style="border-radius:16px;">
+          <span class="node-icon">😊</span>全員安心！
+          <div class="node-sub">今日も問題なし</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow" style="margin-top:8px;"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+    <div class="node node-mail" style="max-width:420px;">
+      <span class="node-icon">📧</span>「ご相談」メールが届いた場合
+      <div class="node-sub">Gmail通知を受け取り次第、すぐに対応する</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- レジェンド -->
+<div style="max-width:420px;margin:0 auto;">
+  <div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:1px;">■ 凡例</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box" style="background:var(--blue-d);border-radius:8px;"></div>開始・終了</div>
+    <div class="legend-item"><div class="legend-box" style="background:var(--yellow);border:2px solid var(--orange);"></div>判断・分岐</div>
+    <div class="legend-item"><div class="legend-box" style="background:white;border:2px solid var(--pink);"></div>操作・処理</div>
+    <div class="legend-item"><div class="legend-box" style="background:#E8F8F5;border:2px solid var(--blue);"></div>スプレッドシート</div>
+    <div class="legend-item"><div class="legend-box" style="background:#FFF3E0;border:2px solid var(--orange);"></div>メール送信</div>
+    <div class="legend-item"><div class="legend-box" style="background:var(--pink);border:2px solid var(--pink-dd);"></div>セットアップ</div>
+  </div>
+</div>
+
+</body>
+</html>
