@@ -727,6 +727,8 @@ function showMain(name, avatar, tantou) {
   document.getElementById('consultSub').textContent       = tantou.name + ' さんへ連絡';
   document.getElementById('mainScreen').classList.remove('hidden');
   updateTime();
+  // 当日の記録をローカルストレージから復元して表示
+  loadTodayLog();
 }
 
 // ページ読み込み時：登録済みかチェック
@@ -786,6 +788,37 @@ if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefin
   window.speechSynthesis.onvoiceschanged = function(){ window.speechSynthesis.getVoices(); };
 }
 
+// 当日の記録をローカルストレージに保存・復元
+function saveTodayLog(type, timeStr) {
+  var today = new Date().toLocaleDateString('ja-JP');
+  var saved = localStorage.getItem('mimamoriLog');
+  var log = saved ? JSON.parse(saved) : { date:'', morning:'', night:'', consult:'' };
+  // 日付が変わっていたらリセット
+  if (log.date !== today) {
+    log = { date: today, morning:'', night:'', consult:'' };
+  }
+  log[type] = timeStr;
+  localStorage.setItem('mimamoriLog', JSON.stringify(log));
+}
+
+function loadTodayLog() {
+  var today = new Date().toLocaleDateString('ja-JP');
+  var saved = localStorage.getItem('mimamoriLog');
+  if (!saved) return;
+  var log = JSON.parse(saved);
+  // 今日のデータでなければ表示しない
+  if (log.date !== today) return;
+  var types = ['morning','night','consult'];
+  var logIds    = { morning:'logMorning', night:'logNight', consult:'logConsult' };
+  var checkIds  = { morning:'checkMorning', night:'checkNight', consult:'checkConsult' };
+  types.forEach(function(t) {
+    if (log[t]) {
+      document.getElementById(logIds[t]).textContent     = '今日 ' + log[t];
+      document.getElementById(checkIds[t]).style.opacity = '1';
+    }
+  });
+}
+
 function showBubble(type) {
   var m = messages[type];
   var now = new Date();
@@ -797,6 +830,8 @@ function showBubble(type) {
   speak(m.voice);
   document.getElementById(m.logId).textContent       = '今日 ' + timeStr;
   document.getElementById(m.checkId).style.opacity   = '1';
+  // 当日記録をローカルストレージに保存
+  saveTodayLog(type, timeStr);
   // スプレッドシートに記録を送信
   sendToSheet(type, userName, selectedTantou ? selectedTantou.name : '');
 }
