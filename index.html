@@ -701,22 +701,64 @@ function doRegister() {
 
 function goToMain() {
   document.getElementById('doneOverlay').classList.remove('show');
+  document.getElementById('codeScreen').classList.add('hidden');
   document.getElementById('setupScreen').classList.add('hidden');
 
-  // メイン画面に反映
-  document.getElementById('mainAvatar').textContent      = selectedAvatar;
-  document.getElementById('mainName').textContent        = userName + ' さん';
-  document.getElementById('mainTantouAvatar').textContent = selectedTantou.avatar;
-  document.getElementById('mainTantouName').textContent  = selectedTantou.name;
-  document.getElementById('mainTantouRole').textContent  = selectedTantou.role;
-  document.getElementById('consultSub').textContent      = selectedTantou.name + ' さんへ連絡';
+  // 登録情報をスマホに保存（次回から自動でメイン画面へ）
+  var saveData = {
+    userName:      userName,
+    selectedAvatar: selectedAvatar,
+    tantouName:    selectedTantou.name,
+    tantouRole:    selectedTantou.role,
+    tantouAvatar:  selectedTantou.avatar
+  };
+  localStorage.setItem('mimamoriUser', JSON.stringify(saveData));
 
+  // メイン画面に反映
+  showMain(userName, selectedAvatar, selectedTantou);
+}
+
+function showMain(name, avatar, tantou) {
+  document.getElementById('mainAvatar').textContent       = avatar;
+  document.getElementById('mainName').textContent         = name + ' さん';
+  document.getElementById('mainTantouAvatar').textContent = tantou.avatar;
+  document.getElementById('mainTantouName').textContent   = tantou.name;
+  document.getElementById('mainTantouRole').textContent   = tantou.role;
+  document.getElementById('consultSub').textContent       = tantou.name + ' さんへ連絡';
   document.getElementById('mainScreen').classList.remove('hidden');
   updateTime();
 }
 
-// ページ読み込み時に担当者リストを取得
-loadTantouList();
+// ページ読み込み時：登録済みかチェック
+function checkSavedUser() {
+  var saved = localStorage.getItem('mimamoriUser');
+  if (saved) {
+    try {
+      var data = JSON.parse(saved);
+      // 保存データをグローバル変数にセット
+      userName       = data.userName;
+      selectedAvatar = data.selectedAvatar;
+      selectedTantou = {
+        name:   data.tantouName,
+        role:   data.tantouRole,
+        avatar: data.tantouAvatar
+      };
+      // アクセスコード・セットアップ画面をスキップしてメイン画面へ
+      document.getElementById('codeScreen').classList.add('hidden');
+      showMain(userName, selectedAvatar, selectedTantou);
+      return true;
+    } catch(e) {
+      localStorage.removeItem('mimamoriUser');
+    }
+  }
+  return false;
+}
+
+// ページ読み込み時の処理
+if (!checkSavedUser()) {
+  // 未登録の場合はアクセスコード画面を表示（デフォルト）
+  loadTantouList();
+}
 
 // ━━━ メイン画面 ━━━
 function updateTime() {
